@@ -265,7 +265,7 @@ function f(u, v) {
     }
 
 function CreateSurfaceData() {
-    const step = .5;
+    const step = 1;
     const min = -180;
     const max = 180;
 
@@ -528,13 +528,13 @@ const handleDeviceOrientation = async () => {
   if (deviceOrientation.checked) {
     requestDeviceOrientation().catch(console.error);
   } else {
-    window.removeEventListener('deviceorientation', latestHandler, true);
+    window.removeEventListener('devicemotion', latestHandler, true);
   }
   deviceOrientation.addEventListener('change', async (e) => {
     if (deviceOrientation.checked) {
       requestDeviceOrientation().catch(console.error);
     } else {
-      window.removeEventListener('deviceorientation', latestHandler, true);
+      window.removeEventListener('devicemotion', latestHandler, true);
     }
   });
 
