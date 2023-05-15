@@ -176,14 +176,6 @@ function draw(){
         const betaRadians = latestEvent.beta * (Math.PI / 180);
         const gammaRadians = latestEvent.gamma * (Math.PI / 180);
 
-        // Adjust the range of the angles to -π to +π radians
-        // if (alphaRadians < -Math.PI) alphaRadians += 2 * Math.PI;
-        // if (betaRadians < -Math.PI) betaRadians += 2 * Math.PI;
-        // if (gammaRadians < -Math.PI) gammaRadians += 2 * Math.PI;
-        // if (alphaRadians > Math.PI) alphaRadians -= 2 * Math.PI;
-        // if (betaRadians > Math.PI) betaRadians -= 2 * Math.PI;
-        // if (gammaRadians > Math.PI) gammaRadians -= 2 * Math.PI;
-
         const rotationZ = m4.axisRotation([0,0,1], alphaRadians);
         const rotationX = m4.axisRotation([1,0,0], -betaRadians);
         const rotationY = m4.axisRotation([0,1,0], gammaRadians);
@@ -500,23 +492,15 @@ const requestDeviceOrientation = async () => {
     const permission = await DeviceOrientationEvent.requestPermission();
     if (permission === 'granted') {
       console.log('Permission granted');
-      window.removeEventListener('deviceorientation', latestHandler, true);
+      window.removeEventListener('devicemotion', latestHandler, true);
       latestHandler = e => {
-        // const acceleration = e.acceleration || e.accelerationIncludingGravity;
-        // const x = acceleration.x;
-        // const y = acceleration.y;
-        // const z = acceleration.z;
 
-        // const alpha = Math.atan2(y, z);
-        // const beta = Math.atan2(-x, Math.sqrt(y * y + z * z));
-        // const gamma = Math.atan2(-y, x);
-
-        latestEvent.alpha = e.alpha;
-        latestEvent.beta = e.beta;
-        latestEvent.gamma = e.gamma;
+        latestEvent.alpha = e.rotationRate.alpha;
+        latestEvent.beta = e.rotationRate.beta;
+        latestEvent.gamma = e.rotationRate.gamma;
         latestEvent.event = e;
       };
-      window.addEventListener('deviceorientation', latestHandler, true);
+      window.addEventListener('devicemotion', latestHandler, true);
     }
   } catch (e) {
     console.error('No device orientation permission');
@@ -528,13 +512,13 @@ const handleDeviceOrientation = async () => {
   if (deviceOrientation.checked) {
     requestDeviceOrientation().catch(console.error);
   } else {
-    window.removeEventListener('deviceorientation', latestHandler, true);
+    window.removeEventListener('devicemotion', latestHandler, true);
   }
   deviceOrientation.addEventListener('change', async (e) => {
     if (deviceOrientation.checked) {
       requestDeviceOrientation().catch(console.error);
     } else {
-      window.removeEventListener('deviceorientation', latestHandler, true);
+      window.removeEventListener('devicemotion', latestHandler, true);
     }
   });
 
