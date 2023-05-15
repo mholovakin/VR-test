@@ -172,9 +172,9 @@ function draw(){
 
     let modelView;
     if (deviceOrientation.checked && latestEvent.alpha && latestEvent.beta && latestEvent.gamma) {
-        const alphaRadians = latestEvent.alpha * (Math.PI / 180);
-        const betaRadians = latestEvent.beta * (Math.PI / 180);
-        const gammaRadians = latestEvent.gamma * (Math.PI / 180);
+        const alphaRadians = latestEvent.alpha;
+        const betaRadians = latestEvent.beta;
+        const gammaRadians = latestEvent.gamma;
 
         const rotationZ = m4.axisRotation([0,0,1], alphaRadians);
         const rotationX = m4.axisRotation([1,0,0], -betaRadians);
@@ -500,7 +500,7 @@ const requestDeviceOrientation = async () => {
         const y = acceleration.y;   // acceleration along the y-axis
         const z = acceleration.z;
 
-        latestEvent.alpha = Math.atan2(y, z);
+        latestEvent.alpha = 0;
         latestEvent.beta = Math.atan2(-x, Math.sqrt(y * y + z * z));;
         latestEvent.gamma = Math.atan2(-acceleration.y, acceleration.x);
         latestEvent.event = e;
