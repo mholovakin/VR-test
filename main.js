@@ -494,10 +494,15 @@ const requestDeviceOrientation = async () => {
       console.log('Permission granted');
       window.removeEventListener('devicemotion', latestHandler, true);
       latestHandler = e => {
+        const acceleration = e.acceleration || e.accelerationIncludingGravity;
 
-        latestEvent.alpha = e.acceleration.x;
-        latestEvent.beta = e.acceleration.y;
-        latestEvent.gamma = e.acceleration.z;
+        const x = acceleration.x;   // acceleration along the x-axis
+        const y = acceleration.y;   // acceleration along the y-axis
+        const z = acceleration.z;
+
+        latestEvent.alpha = Math.atan2(y, z);
+        latestEvent.beta = Math.atan2(-x, Math.sqrt(y * y + z * z));;
+        latestEvent.gamma = Math.atan2(-acceleration.y, acceleration.x);
         latestEvent.event = e;
       };
       window.addEventListener('devicemotion', latestHandler, true);
