@@ -172,17 +172,17 @@ function draw(){
 
     let modelView;
     if (deviceOrientation.checked && latestEvent.alpha && latestEvent.beta && latestEvent.gamma) {
-        const alphaRadians = latestEvent.alpha;
-        const betaRadians = latestEvent.beta;
-        const gammaRadians = latestEvent.gamma;
+        const alphaRadians = latestEvent.alpha * (Math.PI / 180);
+        const betaRadians = latestEvent.beta * (Math.PI / 180);
+        const gammaRadians = latestEvent.gamma * (Math.PI / 180);
 
         // Adjust the range of the angles to -π to +π radians
-        if (alphaRadians < -Math.PI) alphaRadians += 2 * Math.PI;
-        if (betaRadians < -Math.PI) betaRadians += 2 * Math.PI;
-        if (gammaRadians < -Math.PI) gammaRadians += 2 * Math.PI;
-        if (alphaRadians > Math.PI) alphaRadians -= 2 * Math.PI;
-        if (betaRadians > Math.PI) betaRadians -= 2 * Math.PI;
-        if (gammaRadians > Math.PI) gammaRadians -= 2 * Math.PI;
+        // if (alphaRadians < -Math.PI) alphaRadians += 2 * Math.PI;
+        // if (betaRadians < -Math.PI) betaRadians += 2 * Math.PI;
+        // if (gammaRadians < -Math.PI) gammaRadians += 2 * Math.PI;
+        // if (alphaRadians > Math.PI) alphaRadians -= 2 * Math.PI;
+        // if (betaRadians > Math.PI) betaRadians -= 2 * Math.PI;
+        // if (gammaRadians > Math.PI) gammaRadians -= 2 * Math.PI;
 
         const rotationZ = m4.axisRotation([0,0,1], alphaRadians);
         const rotationX = m4.axisRotation([1,0,0], -betaRadians);
@@ -500,23 +500,23 @@ const requestDeviceOrientation = async () => {
     const permission = await DeviceOrientationEvent.requestPermission();
     if (permission === 'granted') {
       console.log('Permission granted');
-      window.removeEventListener('devicemotion', latestHandler, true);
+      window.removeEventListener('deviceorientation', latestHandler, true);
       latestHandler = e => {
-        const acceleration = e.acceleration || e.accelerationIncludingGravity;
-        const x = acceleration.x;
-        const y = acceleration.y;
-        const z = acceleration.z;
+        // const acceleration = e.acceleration || e.accelerationIncludingGravity;
+        // const x = acceleration.x;
+        // const y = acceleration.y;
+        // const z = acceleration.z;
 
-        const alpha = Math.atan2(y, z);
-        const beta = Math.atan2(-x, Math.sqrt(y * y + z * z));
-        const gamma = Math.atan2(-y, x);
+        // const alpha = Math.atan2(y, z);
+        // const beta = Math.atan2(-x, Math.sqrt(y * y + z * z));
+        // const gamma = Math.atan2(-y, x);
 
-        latestEvent.alpha = alpha;
-        latestEvent.beta = beta;
-        latestEvent.gamma = gamma;
+        latestEvent.alpha = e.alpha;
+        latestEvent.beta = e.beta;
+        latestEvent.gamma = e.gamma;
         latestEvent.event = e;
       };
-      window.addEventListener('devicemotion', latestHandler, true);
+      window.addEventListener('deviceorientation', latestHandler, true);
     }
   } catch (e) {
     console.error('No device orientation permission');
@@ -528,13 +528,13 @@ const handleDeviceOrientation = async () => {
   if (deviceOrientation.checked) {
     requestDeviceOrientation().catch(console.error);
   } else {
-    window.removeEventListener('devicemotion', latestHandler, true);
+    window.removeEventListener('deviceorientation', latestHandler, true);
   }
   deviceOrientation.addEventListener('change', async (e) => {
     if (deviceOrientation.checked) {
       requestDeviceOrientation().catch(console.error);
     } else {
-      window.removeEventListener('devicemotion', latestHandler, true);
+      window.removeEventListener('deviceorientation', latestHandler, true);
     }
   });
 
