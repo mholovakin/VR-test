@@ -495,9 +495,9 @@ const requestDeviceOrientation = async () => {
       window.removeEventListener('devicemotion', latestHandler, true);
       latestHandler = e => {
 
-        latestEvent.alpha = e.rotationRate.alpha;
-        latestEvent.beta = e.rotationRate.beta;
-        latestEvent.gamma = e.rotationRate.gamma;
+        latestEvent.alpha = e.acceleration.x;
+        latestEvent.beta = e.acceleration.y;
+        latestEvent.gamma = e.acceleration.z;
         latestEvent.event = e;
       };
       window.addEventListener('devicemotion', latestHandler, true);
