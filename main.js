@@ -494,15 +494,9 @@ const requestDeviceOrientation = async () => {
       console.log('Permission granted');
       window.removeEventListener('devicemotion', latestHandler, true);
       latestHandler = e => {
-        const acceleration = e.accelerationIncludingGravity;
-
-        const x = acceleration.x;   // acceleration along the x-axis
-        const y = acceleration.y;   // acceleration along the y-axis
-        const z = acceleration.z;
-
-        latestEvent.alpha = Math.atan2(x / Math.sqrt(y**2 + z**2));
-        latestEvent.beta = Math.atan2(y / Math.sqrt(x**2 + z**2));;
-        latestEvent.gamma = Math.atan2(z / Math.sqrt(x**2 + y**2));
+        latestEvent.alpha = calculateAngle(e.acceleration.x, e.acceleration.y);
+        latestEvent.beta = calculateAngle(e.acceleration.y, e.acceleration.z);
+        latestEvent.gamma = calculateAngle(e.acceleration.x, e.acceleration.z);
         latestEvent.event = e;
       };
       window.addEventListener('devicemotion', latestHandler, true);
@@ -511,6 +505,11 @@ const requestDeviceOrientation = async () => {
     console.error('No device orientation permission');
   }
 };
+
+const calculateAngle = (a, b) => {
+    return Math.atan2(b, a);
+};
+ 
 
 const handleDeviceOrientation = async () => {
   const deviceOrientation = document.getElementById('device-orientation');
