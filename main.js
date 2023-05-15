@@ -172,9 +172,18 @@ function draw(){
 
     let modelView;
     if (deviceOrientation.checked && latestEvent.alpha && latestEvent.beta && latestEvent.gamma) {
-        const alphaRadians = latestEvent.alpha * (Math.PI / 180);
-        const betaRadians = latestEvent.beta * (Math.PI / 180);
-        const gammaRadians = latestEvent.gamma * (Math.PI / 180);
+        const alphaRadians = latestEvent.alpha;
+        const betaRadians = latestEvent.beta;
+        const gammaRadians = latestEvent.gamma;
+
+        // Adjust the range of the angles to -π to +π radians
+        if (alphaRadians < -Math.PI) alphaRadians += 2 * Math.PI;
+        if (betaRadians < -Math.PI) betaRadians += 2 * Math.PI;
+        if (gammaRadians < -Math.PI) gammaRadians += 2 * Math.PI;
+        if (alphaRadians > Math.PI) alphaRadians -= 2 * Math.PI;
+        if (betaRadians > Math.PI) betaRadians -= 2 * Math.PI;
+        if (gammaRadians > Math.PI) gammaRadians -= 2 * Math.PI;
+
         const rotationZ = m4.axisRotation([0,0,1], alphaRadians);
         const rotationX = m4.axisRotation([1,0,0], -betaRadians);
         const rotationY = m4.axisRotation([0,1,0], gammaRadians);
