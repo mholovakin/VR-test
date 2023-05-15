@@ -195,26 +195,26 @@ function draw(){
     }
 
     const rotateToPointZero = m4.axisRotation([0.707, 0.707, 0], 0.7);
-    const translateToPointZero = m4.translation(0, 0, -10);
+    // const translateToPointZero = m4.translation(0, 0, -10);
     const translateToLeft = m4.translation(-0.03, 0, -10);
     const translateToRight = m4.translation(0.03, 0, -10);
 
-    const matAccum0 = m4.multiply(rotateToPointZero, modelView);
-    const matAccum1 = m4.multiply(translateToPointZero, matAccum0);
+    // const matAccum0 = m4.multiply(rotateToPointZero, modelView);
+    // const matAccum1 = m4.multiply(translateToPointZero, matAccum0);
 
     const matAccum1Left = m4.multiply(translateToLeft, modelView);
     const matAccum1Right = m4.multiply(translateToRight, modelView);
 
-    const modelViewProjection = m4.multiply(projection, matAccum1);
+    // const modelViewProjection = m4.multiply(projection, matAccum1);
 
 
     const modelViewLeftProjection = m4.multiply(projectionLeft, matAccum1Left);
     const modelViewRightProjection = m4.multiply(projectionRight, matAccum1Right);
 
-    const modelviewInv = m4.inverse(matAccum1, new Float32Array(16));
-    const normalMatrix = m4.transpose(modelviewInv, new Float32Array(16));
+    // const modelviewInv = m4.inverse(matAccum1, new Float32Array(16));
+    // const normalMatrix = m4.transpose(modelviewInv, new Float32Array(16));
 
-    gl.uniformMatrix4fv(shProgram.iModelViewProjectionMatrix, false, modelViewProjection);
+    // gl.uniformMatrix4fv(shProgram.iModelViewProjectionMatrix, false, modelViewProjection);
     if (video.readyState === video.HAVE_ENOUGH_DATA) {
         gl.bindTexture(gl.TEXTURE_2D, webcamTexture);
         gl.texImage2D(
@@ -229,7 +229,7 @@ function draw(){
       } else {
         console.log('Video stream not ready');
       }
-    gl.uniformMatrix4fv(shProgram.iNormalMatrix, false, normalMatrix);
+    // gl.uniformMatrix4fv(shProgram.iNormalMatrix, false, normalMatrix);
 
 
     gl.uniform1f(shProgram.iShininess, 10.0);
