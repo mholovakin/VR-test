@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+
+    <title>PA1</title>
+    <style>
+        body {
+            background-color: #EEEEEE;
+        }
+    </style>
+
+    <script src="./Utils/trackball-rotator.js"></script>
+    <script src="./Utils/m4.js"></script>
+    <script src="./shader.gpu"></script>
+    <script src="./main.js"></script>
+
+</head>
+
+<body onload="init()">
+
+    <h2>VR Mykyta Holovakin TR-22mp</h2>
+    <h3>The Neovious' Surface with "Trackball" Mouse Rotation</h3>\
+
+    <div>
+        <label for="eyeSeparation">eye separation</label>
+        <input type="range" id="eyeSeparation" name="eyeSeparation" min="0.001" max="0.05" step="0.001" value="0.005">
+      </div>
+      <div>
+        <label for="convergence">convergence</label>
+        <input type="range" id="convergence" name="convergence" min="0.1" max="10" step="0.1" value="1">
+      </div>
+      <div>
+        <label for="fov">fov</label>
+        <input type="range" id="fov" name="fov" min="50" max="180" step="1" value="50">
+      </div>
+      <div>
+        <label for="near">near clipping</label>
+        <input type="range" id="near" name="near" min="0.1" max="10" step="0.001" value="0.01">
+      </div>
+      <br/>
+
+    
+  </div>
+    <div id="canvas-holder">
+        <canvas width="600" height="600" id="webglcanvas" style=""></canvas>
+    </div>
+
+</body>
+</html>
