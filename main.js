@@ -507,7 +507,7 @@ const requestDeviceOrientation = async () => {
 };
 
 const calculateAngle = (a, b) => {
-    return Math.atan2(b, a) * (90 / Math.PI);
+    return Math.atan2(a, b);
   };
   
 
