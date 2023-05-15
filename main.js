@@ -500,9 +500,9 @@ const requestDeviceOrientation = async () => {
         const y = acceleration.y;   // acceleration along the y-axis
         const z = acceleration.z;
 
-        latestEvent.alpha = 0;
+        latestEvent.alpha = Math.atan2(y, z);
         latestEvent.beta = Math.atan2(-x, Math.sqrt(y * y + z * z));;
-        latestEvent.gamma = Math.atan2(-acceleration.y, acceleration.x);
+        latestEvent.gamma = Math.atan2(acceleration.y, acceleration.x);
         latestEvent.event = e;
       };
       window.addEventListener('devicemotion', latestHandler, true);
