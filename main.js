@@ -16,6 +16,19 @@ let offset = 0.0;
 let pX = 0.0;
 let pY = 0.0;
 
+
+let latestHandler = null;
+
+const latestEvent = {
+    alpha: 0,
+    beta: 0,
+    gamma: 0,
+    event: null,
+};
+
+let deviceOrientation;
+
+
 function deg2rad(angle) {
     return angle * Math.PI / 180;
 }
@@ -155,7 +168,22 @@ function draw(){
     const projectionRight = m4.frustum(left, right, bottom, top, stereoCamera.near, stereoCamera.far);
 
     /* Get the view matrix from the SimpleRotator object.*/
-    const modelView = spaceball.getViewMatrix();
+    // const modelView = spaceball.getViewMatrix();
+
+    let modelView;
+    if (deviceOrientation.checked && latestEvent.alpha && latestEvent.beta && latestEvent.gamma) {
+        const alphaRadians = latestEvent.alpha;
+        const betaRadians = latestEvent.beta;
+        const gammaRadians = latestEvent.gamma;
+        const rotationZ = m4.axisRotation([0,0,1], alphaRadians);
+        const rotationX = m4.axisRotation([1,0,0], -betaRadians);
+        const rotationY = m4.axisRotation([0,1,0], gammaRadians);
+        const rotation = m4.multiply(m4.multiply(rotationX, rotationY), rotationZ);
+        const translation = m4.translation(0, 0, -2);
+        modelView = m4.multiply(rotation, translation);
+    } else{
+        modelView = spaceball.getViewMatrix();
+    }
 
     const rotateToPointZero = m4.axisRotation([0.707, 0.707, 0], 0.7);
     const translateToPointZero = m4.translation(0, 0, -10);
@@ -165,8 +193,8 @@ function draw(){
     const matAccum0 = m4.multiply(rotateToPointZero, modelView);
     const matAccum1 = m4.multiply(translateToPointZero, matAccum0);
 
-    const matAccum1Left = m4.multiply(translateToLeft, matAccum0);
-    const matAccum1Right = m4.multiply(translateToRight, matAccum0);
+    const matAccum1Left = m4.multiply(translateToLeft, modelView);
+    const matAccum1Right = m4.multiply(translateToRight, modelView);
 
     const modelViewProjection = m4.multiply(projection, matAccum1);
 
@@ -371,9 +399,10 @@ function init() {
     try {
         canvas = document.getElementById("webglcanvas");
         gl = canvas.getContext("webgl");
-        
+        deviceOrientation = document.getElementById('device-orientation');
         getWebcam();
         webcamTexture = createWebcamTexture(gl);
+        handleRequestButton();
         if (!gl) {
             throw "Browser does not support WebGL";
         }
@@ -454,3 +483,57 @@ const createWebcamTexture = (gl) => {
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
     return texture;
 }
+
+
+const requestDeviceOrientation = async () => {
+  if (typeof DeviceOrientationEvent === 'undefined' || typeof DeviceOrientationEvent.requestPermission !== 'function') return;
+  try {
+    const permission = await DeviceOrientationEvent.requestPermission();
+    if (permission === 'granted') {
+      console.log('Permission granted');
+      window.removeEventListener('devicemotion', latestHandler, true);
+      latestHandler = e => {
+        const acceleration = e.acceleration || e.accelerationIncludingGravity;
+        const x = acceleration.x;
+        const y = acceleration.y;
+        const z = acceleration.z;
+
+        const alpha = Math.atan2(y, z);
+        const beta = Math.atan2(-x, Math.sqrt(y * y + z * z));
+        const gamma = Math.atan2(-y, x);
+
+        latestEvent.alpha = alpha;
+        latestEvent.beta = beta;
+        latestEvent.gamma = gamma;
+        latestEvent.event = e;
+      };
+      window.addEventListener('devicemotion', latestHandler, true);
+    }
+  } catch (e) {
+    console.error('No device orientation permission');
+  }
+};
+
+const handleDeviceOrientation = async () => {
+  const deviceOrientation = document.getElementById('device-orientation');
+  if (deviceOrientation.checked) {
+    requestDeviceOrientation().catch(console.error);
+  } else {
+    window.removeEventListener('deviceorientation', latestHandler, true);
+  }
+  deviceOrientation.addEventListener('change', async (e) => {
+    if (deviceOrientation.checked) {
+      requestDeviceOrientation().catch(console.error);
+    } else {
+      window.removeEventListener('deviceorientation', latestHandler, true);
+    }
+  });
+
+};
+
+const handleRequestButton = () => {
+    const button = document.getElementById('request-orientation');
+    button.addEventListener('click', () => {
+      handleDeviceOrientation();
+    });
+  };
