@@ -176,7 +176,7 @@ function draw(){
         const betaRadians = latestEvent.beta;
         const gammaRadians = latestEvent.gamma;
 
-        const rotationZ = m4.axisRotation([0,0,1], alphaRadians);
+        // const rotationZ = m4.axisRotation([0,0,1], alphaRadians);
         const rotationX = m4.axisRotation([1,0,0], -betaRadians);
         const rotationY = m4.axisRotation([0,1,0], gammaRadians);
         const rotation = m4.multiply(rotationX, rotationY);
@@ -495,7 +495,7 @@ const requestDeviceOrientation = async () => {
       window.removeEventListener('devicemotion', latestHandler, true);
       latestHandler = e => {
         latestEvent.alpha = Math.atan(e.acceleration.x, -e.acceleration.z);
-        latestEvent.beta = Math.atan(e.acceleration.y, (e.acceleration.x ** 2 + e.acceleration.z ** 2));
+        latestEvent.beta = Math.atan(-e.acceleration.y, (e.acceleration.x ** 2 + e.acceleration.z ** 2));
         latestEvent.gamma = Math.atan(-e.acceleration.x, -e.acceleration.y);
         latestEvent.event = e;
       };
