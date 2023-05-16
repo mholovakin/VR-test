@@ -176,9 +176,9 @@ function draw(){
         const betaRadians = lastEvent.beta;
         const gammaRadians = lastEvent.gamma;
 
-        const rotationZ = m4.axisRotation([0,0,1], alphaRadians);
-        const rotationX = m4.axisRotation([1,0,0], -betaRadians);
-        const rotationY = m4.axisRotation([0,1,0], gammaRadians);
+        const rotationZ = m4.axisRotation([0.707, 0.707, 0], alphaRadians);
+        const rotationX = m4.axisRotation([0, 0.707, 0.707], -betaRadians);
+        const rotationY = m4.axisRotation([0.707,0,0.707], gammaRadians);
         const rotation = m4.multiply(m4.multiply(rotationX, rotationY), rotationZ);
         const translation = m4.translation(0, 0, -5);
         modelView = m4.multiply(rotation, translation);
