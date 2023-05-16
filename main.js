@@ -180,7 +180,7 @@ function draw(){
         const rotationX = m4.axisRotation([1,0,0], -betaRadians);
         const rotationY = m4.axisRotation([0,1,0], gammaRadians);
         const rotation = m4.multiply(m4.multiply(rotationX, rotationY), rotationZ);
-        const translation = m4.translation(0, 0, -10);
+        const translation = m4.translation(0, 0, -20);
         modelView = m4.multiply(rotation, translation);
     } else{
         modelView = spaceball.getViewMatrix();
