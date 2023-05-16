@@ -19,7 +19,7 @@ let pY = 0.0;
 
 let latestHandler = null;
 
-const latestEvent = {
+const lastEvent = {
     alpha: 0,
     beta: 0,
     gamma: 0,
@@ -171,10 +171,10 @@ function draw(){
     // const modelView = spaceball.getViewMatrix();
 
     let modelView;
-    if (deviceOrientation.checked && latestEvent.alpha && latestEvent.beta && latestEvent.gamma) {
-        const alphaRadians = latestEvent.alpha;
-        const betaRadians = latestEvent.beta;
-        const gammaRadians = latestEvent.gamma;
+    if (deviceOrientation.checked && lastEvent.alpha && lastEvent.beta && lastEvent.gamma) {
+        const alphaRadians = lastEvent.alpha;
+        const betaRadians = lastEvent.beta;
+        const gammaRadians = lastEvent.gamma;
 
         const rotationZ = m4.axisRotation([0,0,1], alphaRadians);
         const rotationX = m4.axisRotation([1,0,0], -betaRadians);
@@ -188,8 +188,8 @@ function draw(){
 
     const rotateToPointZero = m4.axisRotation([0.707, 0.707, 0], 0.7);
     // const translateToPointZero = m4.translation(0, 0, -10);
-    const translateToLeft = m4.translation(-0.03, 0, -5);
-    const translateToRight = m4.translation(0.03, 0, -5);
+    const translateToLeft = m4.translation(-0.03, 0, -10);
+    const translateToRight = m4.translation(0.03, 0, -10);
 
     // const matAccum0 = m4.multiply(rotateToPointZero, modelView);
     // const matAccum1 = m4.multiply(translateToPointZero, matAccum0);
@@ -400,7 +400,7 @@ function init() {
     try {
         canvas = document.getElementById("webglcanvas");
         gl = canvas.getContext("webgl");
-        deviceOrientation = document.getElementById('device-orientation');
+        deviceOrientation = document.getElementById('accelerometer-tangible-interface');
         getWebcam();
         webcamTexture = createWebcamTexture(gl);
         handleRequestButton();
@@ -494,10 +494,10 @@ const requestDeviceOrientation = async () => {
       console.log('Permission granted');
       window.removeEventListener('devicemotion', latestHandler, true);
       latestHandler = e => {
-        latestEvent.alpha = Math.atan(e.acceleration.x, -e.acceleration.z);
-        latestEvent.beta = Math.atan(-e.acceleration.y, (e.acceleration.x ** 2 + e.acceleration.z ** 2));
-        latestEvent.gamma = Math.atan(-e.acceleration.x, -e.acceleration.y);
-        latestEvent.event = e;
+        lastEvent.alpha = Math.atan(e.acceleration.x, e.acceleration.z);
+        lastEvent.beta = Math.atan(-e.acceleration.y, (e.acceleration.x ** 2 + e.acceleration.z ** 2));
+        lastEvent.gamma = Math.atan(-e.acceleration.x, -e.acceleration.y);
+        lastEvent.event = e;
       };
       window.addEventListener('devicemotion', latestHandler, true);
     }
@@ -507,8 +507,8 @@ const requestDeviceOrientation = async () => {
 };
   
 
-const handleDeviceOrientation = async () => {
-  const deviceOrientation = document.getElementById('device-orientation');
+const handleDeviceOrientation = () => {
+  const deviceOrientation = document.getElementById('accelerometer-tangible-interface');
   if (deviceOrientation.checked) {
     requestDeviceOrientation().catch(console.error);
   } else {
@@ -525,7 +525,7 @@ const handleDeviceOrientation = async () => {
 };
 
 const handleRequestButton = () => {
-    const button = document.getElementById('request-orientation');
+    const button = document.getElementById('request-accelerometer-tangible-interface');
     button.addEventListener('click', () => {
       handleDeviceOrientation();
     });
