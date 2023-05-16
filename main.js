@@ -177,8 +177,8 @@ function draw(){
         const gammaRadians = latestEvent.gamma;
 
         const rotationZ = m4.axisRotation([0,0,1], alphaRadians);
-        const rotationX = m4.axisRotation([0,1,0], gammaRadians);
-        const rotationY = m4.axisRotation([1,0,0], -betaRadians);
+        const rotationX = m4.axisRotation([1,0,0], -betaRadians);
+        const rotationY = m4.axisRotation([0,1,0], gammaRadians);
         const rotation = m4.multiply(m4.multiply(rotationX, rotationY), rotationZ);
         const translation = m4.translation(0, 0, -10);
         modelView = m4.multiply(rotation, translation);
@@ -494,9 +494,9 @@ const requestDeviceOrientation = async () => {
       console.log('Permission granted');
       window.removeEventListener('devicemotion', latestHandler, true);
       latestHandler = e => {
-        latestEvent.alpha = Math.atan(e.acceleration.y, e.acceleration.z);
-        latestEvent.beta =  Math.atan(-e.acceleration.x, (e.acceleration.y ** 2 + e.acceleration.z ** 2));
-        latestEvent.gamma = Math.atan(-e.acceleration.y, e.acceleration.x);
+        latestEvent.alpha = Math.atan2(e.acceleration.y, e.acceleration.z);
+        latestEvent.beta =  Math.atan2(-e.acceleration.x, (e.acceleration.y ** 2 + e.acceleration.z ** 2));
+        latestEvent.gamma = Math.atan2(-e.acceleration.y, e.acceleration.x);
         latestEvent.event = e;
       };
       window.addEventListener('devicemotion', latestHandler, true);
