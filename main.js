@@ -171,15 +171,15 @@ function draw(){
     // const modelView = spaceball.getViewMatrix();
 
     let modelView;
-    if (deviceOrientation.checked && latestEvent.alpha && latestEvent.beta) {
+    if (deviceOrientation.checked && latestEvent.alpha && latestEvent.beta && latestEvent.gamma) {
         const alphaRadians = latestEvent.alpha;
         const betaRadians = latestEvent.beta;
-        // const gammaRadians = latestEvent.gamma;
+        const gammaRadians = latestEvent.gamma;
 
         const rotationZ = m4.axisRotation([0,0,1], alphaRadians);
         const rotationX = m4.axisRotation([1,0,0], -betaRadians);
-        // const rotationY = m4.axisRotation([0,1,0], gammaRadians);
-        const rotation = m4.multiply(rotationX, rotationZ);
+        const rotationY = m4.axisRotation([0,1,0], gammaRadians);
+        const rotation = m4.multiply(m4.multiply(rotationX, rotationY), rotationZ);
         const translation = m4.translation(0, 0, -2);
         modelView = m4.multiply(rotation, translation);
     } else{
@@ -494,9 +494,9 @@ const requestDeviceOrientation = async () => {
       console.log('Permission granted');
       window.removeEventListener('devicemotion', latestHandler, true);
       latestHandler = e => {
-        latestEvent.alpha = calculateAngle(e.acceleration.y, e.acceleration.z);
-        latestEvent.beta =  calculateAngle(-e.acceleration.x, (e.acceleration.y**2 + e.acceleration.z ** 2));
-        // latestEvent.gamma = calculateAngle(-e.acceleration.y, e.acceleration.x);
+        latestEvent.alpha = Math.atan(e.acceleration.y, e.acceleration.z);
+        latestEvent.beta =  Math.atan(-e.acceleration.x, (e.acceleration.y**2 + e.acceleration.z ** 2));
+        latestEvent.gamma = Math.atan(-e.acceleration.y, e.acceleration.x);
         latestEvent.event = e;
       };
       window.addEventListener('devicemotion', latestHandler, true);
@@ -505,10 +505,6 @@ const requestDeviceOrientation = async () => {
     console.error('No device orientation permission');
   }
 };
-
-const calculateAngle = (a, b) => {
-    return Math.atan2(a, b);
-  };
   
 
 const handleDeviceOrientation = async () => {
