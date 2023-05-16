@@ -180,7 +180,7 @@ function draw(){
         const rotationX = m4.axisRotation([1,0,0], -betaRadians);
         const rotationY = m4.axisRotation([0,1,0], gammaRadians);
         const rotation = m4.multiply(m4.multiply(rotationX, rotationY), rotationZ);
-        const translation = m4.translation(0, 0, -20);
+        const translation = m4.translation(0, 0, -5);
         modelView = m4.multiply(rotation, translation);
     } else {
         modelView = spaceball.getViewMatrix();
@@ -188,8 +188,8 @@ function draw(){
 
     const rotateToPointZero = m4.axisRotation([0.707, 0.707, 0], 0.7);
     // const translateToPointZero = m4.translation(0, 0, -10);
-    const translateToLeft = m4.translation(-0.03, 0, -10);
-    const translateToRight = m4.translation(0.03, 0, -10);
+    const translateToLeft = m4.translation(-0.03, 0, -5);
+    const translateToRight = m4.translation(0.03, 0, -5);
 
     // const matAccum0 = m4.multiply(rotateToPointZero, modelView);
     // const matAccum1 = m4.multiply(translateToPointZero, matAccum0);
