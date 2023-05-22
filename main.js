@@ -17,7 +17,7 @@ let pX = 0.0;
 let pY = 0.0;
 
 
-let latestHandler = null;
+let lastHandler = null;
 
 const lastEvent = {
     alpha: 0,
@@ -172,13 +172,10 @@ function draw(){
 
     let modelView;
     if (deviceOrientation.checked && lastEvent.alpha && lastEvent.beta && lastEvent.gamma) {
-        const alphaRadians = lastEvent.alpha;
-        const betaRadians = lastEvent.beta;
-        const gammaRadians = lastEvent.gamma;
 
-        const rotationZ = m4.axisRotation([0.707, 0.707, 0], alphaRadians);
-        const rotationX = m4.axisRotation([0, 0.707, 0.707], -betaRadians);
-        const rotationY = m4.axisRotation([0.707,0,0.707], gammaRadians);
+        const rotationZ = m4.axisRotation([0,0,1], lastEvent.alpha);
+        const rotationX = m4.axisRotation([1,0,0], -lastEvent.beta);
+        const rotationY = m4.axisRotation([0,1,0], lastEvent.gamma);
         const rotation = m4.multiply(m4.multiply(rotationX, rotationY), rotationZ);
         const translation = m4.translation(0, 0, -5);
         modelView = m4.multiply(rotation, translation);
@@ -492,14 +489,14 @@ const requestDeviceOrientation = async () => {
     const permission = await DeviceOrientationEvent.requestPermission();
     if (permission === 'granted') {
       console.log('Permission granted');
-      window.removeEventListener('devicemotion', latestHandler, true);
-      latestHandler = e => {
+      window.removeEventListener('devicemotion', lastHandler, true);
+      lastHandler = e => {
         lastEvent.alpha = Math.atan(e.acceleration.x, e.acceleration.z);
         lastEvent.beta = Math.atan(-e.acceleration.y, (e.acceleration.x ** 2 + e.acceleration.z ** 2));
         lastEvent.gamma = Math.atan(-e.acceleration.x, -e.acceleration.y);
         lastEvent.event = e;
       };
-      window.addEventListener('devicemotion', latestHandler, true);
+      window.addEventListener('devicemotion', lastHandler, true);
     }
   } catch (e) {
     console.error('No device orientation permission');
@@ -512,13 +509,13 @@ const handleDeviceOrientation = () => {
   if (deviceOrientation.checked) {
     requestDeviceOrientation().catch(console.error);
   } else {
-    window.removeEventListener('devicemotion', latestHandler, true);
+    window.removeEventListener('devicemotion', lastHandler, true);
   }
   deviceOrientation.addEventListener('change', async (e) => {
     if (deviceOrientation.checked) {
       requestDeviceOrientation().catch(console.error);
     } else {
-      window.removeEventListener('devicemotion', latestHandler, true);
+      window.removeEventListener('devicemotion', lastHandler, true);
     }
   });
 
